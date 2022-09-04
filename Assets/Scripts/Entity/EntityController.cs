@@ -21,7 +21,7 @@ public class EntityController : MonoBehaviour
         if (m_MoveDir.sqrMagnitude > 0f)
         {
             transform.rotation = Quaternion.LookRotation(Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0) * new Vector3(m_MoveDir.x, 0f, m_MoveDir.y));
-            transform.Translate(Vector3.forward * 2.0f * Time.deltaTime);
+            transform.Translate(Vector3.forward * 4.0f * Time.deltaTime);
 
             if (m_IsWalking == false)
             {
