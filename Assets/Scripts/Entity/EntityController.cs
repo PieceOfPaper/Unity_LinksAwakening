@@ -56,7 +56,7 @@ public class EntityController : MonoBehaviour
         if (m_PlayerInput == playerInput)
             return;
 
-        //���� �׼ǿ� �ݹ� ����
+        //이전 액션에 콜백 제거
         if (m_InputAction_Move != null)
         {
             m_InputAction_Move.started -= OnInput_Move;
@@ -71,7 +71,7 @@ public class EntityController : MonoBehaviour
             m_InputAction_Move = m_PlayerInput.currentActionMap.FindAction("Move");
         }
 
-        //�ű� �׼ǿ� �ݹ� ���
+        //신규 액션에 콜백 등록
         if (m_InputAction_Move != null)
         {
             m_InputAction_Move.started += OnInput_Move;
