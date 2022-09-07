@@ -5,6 +5,7 @@ using UnityEngine;
 public class EntityController : MonoBehaviour
 {
     Animator m_Animator;
+    UnityEngine.AI.NavMeshAgent m_NavMeshAgent;
     bool m_IsWalking = false;
     Vector2 m_MoveDir;
 
@@ -12,6 +13,7 @@ public class EntityController : MonoBehaviour
     void Start()
     {
         m_Animator = GetComponent<Animator>();
+        m_NavMeshAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         InitPlayerInput(GetComponent<UnityEngine.InputSystem.PlayerInput>());
     }
 
@@ -20,8 +22,10 @@ public class EntityController : MonoBehaviour
     {
         if (m_MoveDir.sqrMagnitude > 0f)
         {
+            m_NavMeshAgent.isStopped = false;
+            m_NavMeshAgent.updateRotation = false;
             transform.rotation = Quaternion.LookRotation(Quaternion.Euler(0, Camera.main.transform.eulerAngles.y, 0) * new Vector3(m_MoveDir.x, 0f, m_MoveDir.y));
-            transform.Translate(Vector3.forward * 4.0f * Time.deltaTime);
+            m_NavMeshAgent.SetDestination(transform.position + transform.rotation * Vector3.forward);
 
             if (m_IsWalking == false)
             {
@@ -31,6 +35,8 @@ public class EntityController : MonoBehaviour
         }
         else
         {
+            m_NavMeshAgent.isStopped = true;
+
             if (m_IsWalking == true)
             {
                 m_Animator.Play("Idle");
@@ -50,7 +56,7 @@ public class EntityController : MonoBehaviour
         if (m_PlayerInput == playerInput)
             return;
 
-        //ÀÌÀü ¾×¼Ç¿¡ ÄÝ¹é Á¦°Å
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½×¼Ç¿ï¿½ ï¿½Ý¹ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (m_InputAction_Move != null)
         {
             m_InputAction_Move.started -= OnInput_Move;
@@ -65,7 +71,7 @@ public class EntityController : MonoBehaviour
             m_InputAction_Move = m_PlayerInput.currentActionMap.FindAction("Move");
         }
 
-        //½Å±Ô ¾×¼Ç¿¡ ÄÝ¹é µî·Ï
+        //ï¿½Å±ï¿½ ï¿½×¼Ç¿ï¿½ ï¿½Ý¹ï¿½ ï¿½ï¿½ï¿½
         if (m_InputAction_Move != null)
         {
             m_InputAction_Move.started += OnInput_Move;
