@@ -46,12 +46,6 @@ public abstract class MonoBehaviourSingletonTemplate<T> : MonoBehaviour where T 
     
     protected virtual void Awake()
     {
-        if (m_Instance != this)
-        {
-            Destroy(this);
-            return;
-        }
-
     	DontDestroyOnLoad(gameObject);
     }
 }
