@@ -87,18 +87,72 @@ public class SubSceneTool : EditorWindow
 
     private void OnGUI_SubScenes()
     {
-        //TODO - 리스트로 보여줌
-        //TODO - SubSceneData, 생성, 삭제, 이동
-        //TODO - SubSceneData, 씬 등록
-        //TODO - SubSceneData, 씬 로드, 언로드, 세이브
-        //TODO - SubSceneData, 중심, 거리 계산
+        if (SelectedSubSceneSetting == null)
+            return;
+
+        if (SelectedSubSceneSetting.SubSceneDatList == null)
+            SelectedSubSceneSetting.SubSceneDatList = new List<SubSceneSetting.SubSceneData>();
+        for (int i = 0; i < SelectedSubSceneSetting.SubSceneDatList.Count; i ++)
+        {
+            var data = SelectedSubSceneSetting.SubSceneDatList[i];
+            var sceneData = SceneUtility.GetEditorOpenedSceneBySceneName(data.sceneName);
+
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                GUILayout.Label($"[{i}]", GUILayout.ExpandWidth(false));
+                data.sceneName = EditorGUILayout.TextField(data.sceneName, GUILayout.ExpandWidth(true));
+                if (sceneData.IsValid() == true && sceneData.isLoaded == true)
+                {
+                    if (GUILayout.Button("Close", GUILayout.ExpandWidth(false)))
+                    {
+                        UnityEditor.SceneManagement.EditorSceneManager.CloseScene(sceneData, false);
+                    }
+                }
+                else
+                {
+                    if (GUILayout.Button("Open", GUILayout.ExpandWidth(false)))
+                    {
+                        var path = SceneUtility.GetEditorBuildSettingsScenePathBySceneName(data.sceneName);
+                        UnityEditor.SceneManagement.EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+                    }
+                }
+                if (GUILayout.Button("Bake", GUILayout.ExpandWidth(false)))
+                {
+                    data.Bake();
+                }
+                if (GUILayout.Button("X", GUILayout.ExpandWidth(false)))
+                {
+                    SelectedSubSceneSetting.SubSceneDatList.RemoveAt(i);
+                    i --;
+                    continue;
+                }
+            }
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                GUILayout.Space(10f);
+                data.center = EditorGUILayout.Vector3Field("Center", data.center);
+            }
+            using (new EditorGUILayout.HorizontalScope())
+            {
+                GUILayout.Space(10f);
+                data.range = EditorGUILayout.FloatField("Range", data.range);
+            }
+            EditorGUILayout.EndVertical();
+
+            SelectedSubSceneSetting.SubSceneDatList[i] = data;
+        }
+        if (GUILayout.Button("New SubScne"))
+        {
+            SelectedSubSceneSetting.SubSceneDatList.Add(new SubSceneSetting.SubSceneData());
+        }
     }
 
     private void AutoSelectMainScene()
     {
-        for (int i = 0; i < UnityEditor.SceneManagement.EditorSceneManager.sceneCount; i ++)
+        for (int i = 0; i < EditorSceneManager.sceneCount; i ++)
         {
-            var sceneData = UnityEditor.SceneManagement.EditorSceneManager.GetSceneAt(i);
+            var sceneData = EditorSceneManager.GetSceneAt(i);
             if (sceneData.IsValid() == false) continue;
 
             SelectedMainScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneData.path);

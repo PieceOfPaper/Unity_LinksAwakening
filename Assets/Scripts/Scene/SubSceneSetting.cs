@@ -47,47 +47,61 @@ public class SubSceneSetting : ScriptableObject
                 sceneData = UnityEditor.SceneManagement.EditorSceneManager.GetSceneAt(i);
                 if (sceneData.name == sceneName)
                 {
-                    isLoadedScene = true;
+                    isLoadedScene = sceneData.isLoaded;
                     break;
                 }
             }
 
             // 서브 씬 로드
-            UnityEditor.SceneManagement.EditorSceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
             if (isLoadedScene == false)
-                sceneData = UnityEditor.SceneManagement.EditorSceneManager.GetSceneByName(sceneName);
+            {
+                sceneData = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(SceneUtility.GetEditorBuildSettingsScenePathBySceneName(sceneName), UnityEditor.SceneManagement.OpenSceneMode.Additive);
+            }
+            
             if (sceneData.IsValid() == false)
             {
                 center = Vector3.zero;
                 range = 0f;
                 if (isLoadedScene == false)
-                    UnityEditor.SceneManagement.EditorSceneManager.UnloadSceneAsync(sceneName);
+                    UnityEditor.SceneManagement.EditorSceneManager.CloseScene(sceneData, true);
                 return;
             }
 
-            // 서브씬에 있는 모든 MeshRenderer 검색
-            List<MeshRenderer> meshRendererList = new List<MeshRenderer>();
+            // 서브씬에 있는 모든 Renderer 검색
+            List<Renderer> rendererList = new List<Renderer>();
             var rootObjs = sceneData.GetRootGameObjects();
             for (int i = 0; i < rootObjs.Length; i ++)
             {
                 if (rootObjs[i] == null) continue;
 
-                var meshRenderers = rootObjs[i].GetComponentsInChildren<MeshRenderer>();
-                if (meshRenderers == null || meshRenderers.Length == 0) continue;
+                var renderers = rootObjs[i].GetComponentsInChildren<Renderer>();
+                if (renderers == null || renderers.Length == 0) continue;
 
-                meshRendererList.AddRange(meshRenderers);
+                rendererList.AddRange(renderers);
             }
 
             // MeshRenderer에서 각 Mesh의 Vertex들의 World좌표들을 가져옴.
             List<Vector3> pointList = new List<Vector3>();
-            foreach (var meshRenderer in meshRendererList)
+            foreach (var renderer in rendererList)
             {
-                if (meshRenderer == null) continue;
-                if (meshRenderer.enabled == false) continue;
-                if (meshRenderer.transform == null) continue;
+                if (renderer == null) continue;
+                if (renderer.enabled == false) continue;
+                if (renderer.transform == null) continue;
                 // if (meshRenderer.gameObject.isStatic == false) continue;
 
-                var mesh = meshRenderer.additionalVertexStreams;
+                Mesh mesh = null;
+                if (renderer is MeshRenderer)
+                {
+                    var meshFilter = renderer.GetComponent<MeshFilter>();
+                    if (meshFilter == null) continue;
+
+                    mesh = meshFilter.sharedMesh;
+                }
+                else if (renderer is SkinnedMeshRenderer skinnedMeshRenderer)
+                {
+                    mesh = skinnedMeshRenderer.sharedMesh;
+                }
+                
                 if (mesh == null) continue;
 
                 var vertices = new List<Vector3>();
@@ -95,7 +109,7 @@ public class SubSceneSetting : ScriptableObject
 
                 foreach (var vertex in vertices)
                 {
-                    var point = meshRenderer.transform.TransformPoint(vertex);
+                    var point = renderer.transform.TransformPoint(vertex);
                     point.y = 0f; //쿼터뷰 게임이라 y를 계산하는 것 자체가 사치.
                     pointList.Add(point);
                 }
@@ -120,7 +134,7 @@ public class SubSceneSetting : ScriptableObject
             
             // 서브씬 언로드
             if (isLoadedScene == false)
-                UnityEditor.SceneManagement.EditorSceneManager.UnloadSceneAsync(sceneName);
+                UnityEditor.SceneManagement.EditorSceneManager.CloseScene(sceneData, true);
         }
 #endif
     }
