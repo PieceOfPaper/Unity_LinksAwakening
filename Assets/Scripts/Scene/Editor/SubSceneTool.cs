@@ -170,9 +170,37 @@ public class SubSceneTool : EditorWindow
 
             SelectedSubSceneSetting.SubSceneDatList[i] = data;
         }
-        if (GUILayout.Button("New SubScne"))
+        using (new EditorGUILayout.HorizontalScope())
         {
-            SelectedSubSceneSetting.SubSceneDatList.Add(new SubSceneSetting.SubSceneData());
+            if (GUILayout.Button("New SubScne (Exist Scene)"))
+            {
+                var filePath = EditorUtility.OpenFilePanel("Fine Scene", Application.dataPath, "unity");
+                if (string.IsNullOrWhiteSpace(filePath) == false)
+                {
+                    var sceneName = System.IO.Path.GetFileNameWithoutExtension(filePath);
+
+                    var newSubSceneData = new SubSceneSetting.SubSceneData();
+                    newSubSceneData.sceneName = sceneName;
+                    SelectedSubSceneSetting.SubSceneDatList.Add(newSubSceneData);
+                }
+            }
+            if (GUILayout.Button("New SubScne (New Scene)"))
+            {
+                var saveDefaultName = $"{SelectedMainScene.name}_SubScene_{SelectedSubSceneSetting.SubSceneDatList.Count}";
+                var filePath = EditorUtility.SaveFilePanelInProject("Create Scene", saveDefaultName, "unity", "message");
+                if (string.IsNullOrWhiteSpace(filePath) == false)
+                {
+                    var sceneName = System.IO.Path.GetFileNameWithoutExtension(filePath);
+
+                    var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
+                    newScene.name = sceneName;
+                    EditorSceneManager.SaveScene(newScene, filePath);
+
+                    var newSubSceneData = new SubSceneSetting.SubSceneData();
+                    newSubSceneData.sceneName = sceneName;
+                    SelectedSubSceneSetting.SubSceneDatList.Add(newSubSceneData);
+                }
+            }
         }
     }
 
