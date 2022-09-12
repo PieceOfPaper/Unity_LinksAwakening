@@ -34,12 +34,40 @@ public class SubSceneTool : EditorWindow
     {
         EditorSceneManager.sceneOpened -= OnSceneOpened;
     }
+    
+    private void OnFocus()
+    {
+        SceneView.duringSceneGui -= OnDuringSceneGUI;
+        SceneView.duringSceneGui += OnDuringSceneGUI;
+    }
+    
+    private void OnDestroy()
+    {
+        SceneView.duringSceneGui -= OnDuringSceneGUI;
+    }
 
     private void OnSceneOpened(Scene scene, OpenSceneMode mode)
     {
         if (IsAutoSelectMainScene == true && mode == OpenSceneMode.Single)
             AutoSelectMainScene();
     }
+    
+    private void OnDuringSceneGUI(SceneView sceneView)
+    {
+        using (new Handles.DrawingScope())
+        {
+            if (SelectedSubSceneSetting != null)
+            {
+                foreach (var subSceneData in SelectedSubSceneSetting.SubSceneDatList)
+                {
+                    Handles.color = Color.yellow;
+                    Handles.DrawWireDisc(subSceneData.center, Vector3.up, subSceneData.range);
+                }
+            }
+        }  
+    }
+
+
 
     private void OnGUI()
     {
