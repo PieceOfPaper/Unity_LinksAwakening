@@ -12,4 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a8ae079e8cd5498ebb0a845f1dda8bf, type: 3}
   m_Name: SampleScene
   m_EditorClassIdentifier: 
-  SubSceneDatList: []
+  SubSceneDatList:
+  - sceneName: SampleScene_SubScene_0
+    center: {x: -0.7714932, y: 0, z: -0.7081448}
+    range: 11.071112
+  - sceneName: SampleScene_SubScene_1
+    center: {x: 5.056494, y: 0, z: -11.030438}
+    range: 11.876046
+  - sceneName: SampleScene_SubScene_2
+    center: {x: -9.040852, y: 0, z: -0.45195016}
+    range: 8.496273

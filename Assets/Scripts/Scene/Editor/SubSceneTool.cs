@@ -60,8 +60,27 @@ public class SubSceneTool : EditorWindow
             {
                 foreach (var subSceneData in SelectedSubSceneSetting.SubSceneDatList)
                 {
-                    Handles.color = Color.yellow;
+                    Handles.color = new Color(1f, 1f, 0f, 1.0f);
                     Handles.DrawWireDisc(subSceneData.center, Vector3.up, subSceneData.range);
+
+                    
+                    Handles.color = new Color(1f, 1f, 0f, 1.0f);
+                    var angle = 90 - Mathf.Atan2(Camera.main.transform.position.z - subSceneData.center.z, Camera.main.transform.position.x - subSceneData.center.x) * Mathf.Rad2Deg;
+                    float[] checkAngles = new float[]{
+                        angle,
+                        angle - 90,
+                        angle + 90,
+                    };
+                    for (int i = 0 ; i < checkAngles.Length; i ++)
+                    {
+                        var checkPos = subSceneData.center + Quaternion.Euler(0, checkAngles[i], 0) * Vector3.forward * subSceneData.range;
+                        var viewportPoint = Camera.main.WorldToViewportPoint(checkPos);
+                        Handles.DrawLine(subSceneData.center, checkPos, 1.0f);
+                    }
+
+
+                    Handles.color = new Color(1f, 1f, 0f, 0.25f);
+                    Handles.DrawWireDisc(subSceneData.center, Vector3.up, subSceneData.range * SubSceneSetting.SUBSCENE_CHECK_POS_RANGE_FACTOR);
                 }
             }
         }  
@@ -201,6 +220,11 @@ public class SubSceneTool : EditorWindow
                     SelectedSubSceneSetting.SubSceneDatList.Add(newSubSceneData);
                 }
             }
+        }
+        if (GUILayout.Button("Save"))
+        {
+            EditorUtility.SetDirty(SelectedSubSceneSetting);
+            UnityEditor.AssetDatabase.SaveAssets();
         }
     }
 

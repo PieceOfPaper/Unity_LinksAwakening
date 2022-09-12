@@ -8,6 +8,21 @@ public class SceneChanger : MonoBehaviourSingletonTemplate<SceneChanger>
     Scene m_CurrentSceneData;
     public Scene CurrentSceneData => m_CurrentSceneData;
 
+    SubSceneSetting m_CurrentSubSceneSetting;
+
+
+    Vector3 PlayerPosition
+    {
+        get
+        {
+            //TODO - 우선 임시로 작업. 다른 곳에서 관리하도록 추후 수정 필요.
+            var entityController = FindObjectOfType<EntityController>();
+            if (entityController == null) return Vector3.zero;
+            return entityController.transform.position;
+        }
+    }
+
+
     bool m_IsChangingScene = false;
     string m_ChangeTargetSceneName;
     string m_ChangingSceneName;
@@ -15,9 +30,25 @@ public class SceneChanger : MonoBehaviourSingletonTemplate<SceneChanger>
     float m_SceneChangeProgress = 0f;
 
 
+    List<string> m_LoadedSubSceneNameList = new List<string>();
+
+    private struct SubSceneLoadForm
+    {
+        public bool IsLoad;
+        public string SceneName;
+    }
+    bool m_IsProcessingSubSceneLoadRoutine = false;
+    List<SubSceneLoadForm> m_SubSceneLoadFormList = new List<SubSceneLoadForm>();
+
+
     protected override void Awake()
     {
         base.Awake();
+    }
+
+    private void LateUpdate()
+    {
+        CheckSubSceneLoad();
     }
 
     public void ChangeScene(string sceneName)
@@ -36,13 +67,18 @@ public class SceneChanger : MonoBehaviourSingletonTemplate<SceneChanger>
         }
     }
 
-    public IEnumerator ChangeSceneRoutine()
+    private IEnumerator ChangeSceneRoutine()
     {
         m_IsChangingScene = true;
         AsyncOperation async = null;
         SubSceneSetting subSceneSetting = null;
         while (m_ChangeTargetSceneName != m_CurrentSceneData.name)
         {
+            m_LoadedSubSceneNameList.Clear();
+            m_SubSceneLoadFormList.Clear();
+            m_IsProcessingSubSceneLoadRoutine = false;
+            StopCoroutine("ProcessSubSceneLoadRoutine");
+
             // 빈 Scene을 호출하여 깔끔하게 다 날려버린다.
             async = SceneManager.LoadSceneAsync("Empty", LoadSceneMode.Single);
             while(async.isDone == false)
@@ -85,7 +121,7 @@ public class SceneChanger : MonoBehaviourSingletonTemplate<SceneChanger>
             {
                 //서브씬 로드
                 m_SceneChangeProgress = 0.6f;
-                var subScenes = subSceneSetting.SubSceneDatList.FindAll(m => m.IsContains(Camera.main, Vector3.zero));
+                var subScenes = subSceneSetting.SubSceneDatList.FindAll(m => m.IsContainIn(Camera.main, PlayerPosition));
                 float subSceneProgress = (1.0f / subScenes.Count) * 0.4f;
                 for (int i = 0; i < subScenes.Count; i ++)
                 {
@@ -95,6 +131,7 @@ public class SceneChanger : MonoBehaviourSingletonTemplate<SceneChanger>
                         m_SceneChangeProgress = 0.6f + (subSceneProgress * i) + async.progress * subSceneProgress;
                         yield return null;
                     }
+                    m_LoadedSubSceneNameList.Add(subScenes[i].sceneName);
                 }
                 m_SceneChangeProgress = 1.0f;
             }
@@ -104,9 +141,88 @@ public class SceneChanger : MonoBehaviourSingletonTemplate<SceneChanger>
 
             // 완료!
             m_CurrentSceneData = SceneManager.GetSceneByName(m_ChangingSceneName);
+            m_CurrentSubSceneSetting = subSceneSetting;
         }
         m_IsChangingScene = false;
         m_ChangingSceneName = string.Empty;
         m_ChangeTargetSceneName = string.Empty;
+    }
+
+    public void CheckSubSceneLoad()
+    {
+        if (m_IsChangingScene == true)
+            return;
+
+        if (m_CurrentSubSceneSetting == null || m_CurrentSubSceneSetting.SubSceneDatList.Count == 0)
+            return;
+
+        //영역 밖으로 벗어난 서브씬 체크
+        for (int i = 0; i < m_LoadedSubSceneNameList.Count; i ++)
+        {
+            var subSceneData = m_CurrentSubSceneSetting.GetSubSceneDataBySceneName(m_LoadedSubSceneNameList[i]);
+            if (subSceneData.IsContainOut(Camera.main, PlayerPosition))
+            {
+                var index = m_SubSceneLoadFormList.FindIndex(m => m.SceneName == m_LoadedSubSceneNameList[i]);
+                if (index >= 0)
+                {
+                    if (m_SubSceneLoadFormList[index].IsLoad == true)
+                    {
+                        m_SubSceneLoadFormList.RemoveAt(index);
+                    }
+                }
+                m_SubSceneLoadFormList.Add(new SubSceneLoadForm() { IsLoad = false, SceneName = m_LoadedSubSceneNameList[i]});
+            }
+        }
+
+        //역역 안으로 들어온 서브씬 체크
+        foreach (var subSceneData in m_CurrentSubSceneSetting.SubSceneDatList)
+        {
+            if (m_LoadedSubSceneNameList.Contains(subSceneData.sceneName) == true) continue;
+
+            var index = m_SubSceneLoadFormList.FindIndex(m => m.SceneName == subSceneData.sceneName);
+            if (index >= 0)
+            {
+                if (m_SubSceneLoadFormList[index].IsLoad == true)
+                    continue;
+            }
+
+            if (subSceneData.IsContainIn(Camera.main, PlayerPosition))
+            {
+                if (index >= 0)
+                {
+                    if (m_SubSceneLoadFormList[index].IsLoad == false)
+                    {
+                        m_SubSceneLoadFormList.RemoveAt(index);
+                    }
+                }
+                m_SubSceneLoadFormList.Add(new SubSceneLoadForm() { IsLoad = true, SceneName = subSceneData.sceneName});
+            }
+        }
+
+        if (m_IsProcessingSubSceneLoadRoutine == true)
+            return;
+
+        StartCoroutine(ProcessSubSceneLoadRoutine());
+    }
+
+    private IEnumerator ProcessSubSceneLoadRoutine()
+    {
+        m_IsProcessingSubSceneLoadRoutine = true;
+        while (m_SubSceneLoadFormList.Count > 0)
+        {
+            var form = m_SubSceneLoadFormList[0];
+            m_SubSceneLoadFormList.RemoveAt(0);
+            if (form.IsLoad == true)
+            {
+                m_LoadedSubSceneNameList.Add(form.SceneName);
+                yield return SceneManager.LoadSceneAsync(form.SceneName, LoadSceneMode.Additive);
+            }
+            else
+            {
+                m_LoadedSubSceneNameList.Remove(form.SceneName);
+                yield return SceneManager.UnloadSceneAsync(form.SceneName);
+            }
+        }
+        m_IsProcessingSubSceneLoadRoutine = false;
     }
 }
