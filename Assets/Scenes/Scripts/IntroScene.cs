@@ -5,8 +5,16 @@ using UnityEngine;
 public class IntroScene : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+    IEnumerator Start()
     {
+        var playerPrefabRequest = Resources.LoadAsync<GameObject>("Prefabs/Character/ModularCharacterPBR_Male");
+        yield return playerPrefabRequest;
+        if (playerPrefabRequest.asset != null)
+        {
+            var playerObj = GameObject.Instantiate((GameObject)playerPrefabRequest.asset, Vector3.zero, Quaternion.identity);
+            DontDestroyOnLoad(playerObj);
+        }
+
         SceneChanger.Instance.ChangeScene("SampleScene");
     }
 

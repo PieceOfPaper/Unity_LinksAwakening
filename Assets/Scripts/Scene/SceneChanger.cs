@@ -15,10 +15,8 @@ public class SceneChanger : MonoBehaviourSingletonTemplate<SceneChanger>
     {
         get
         {
-            //TODO - 우선 임시로 작업. 다른 곳에서 관리하도록 추후 수정 필요.
-            var entityController = FindObjectOfType<EntityController>();
-            if (entityController == null) return Vector3.zero;
-            return entityController.transform.position;
+            if (GamePlayData.PlayerCtrler == null) return Vector3.zero;
+            return GamePlayData.PlayerCtrler.transform.position;
         }
     }
 
