@@ -15,6 +15,11 @@ public class IntroScene : MonoBehaviour
             DontDestroyOnLoad(playerObj);
         }
 
+        if (Camera.main != null)
+        {
+            DontDestroyOnLoad(Camera.main);
+        }
+
         SceneChanger.Instance.ChangeScene("SampleScene");
     }
 
