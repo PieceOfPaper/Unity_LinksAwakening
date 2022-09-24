@@ -63,24 +63,26 @@ public class SubSceneTool : EditorWindow
                     Handles.color = new Color(1f, 1f, 0f, 1.0f);
                     Handles.DrawWireDisc(subSceneData.center, Vector3.up, subSceneData.range);
 
-                    
-                    Handles.color = new Color(1f, 1f, 0f, 1.0f);
-                    var angle = 90 - Mathf.Atan2(Camera.main.transform.position.z - subSceneData.center.z, Camera.main.transform.position.x - subSceneData.center.x) * Mathf.Rad2Deg;
-                    float[] checkAngles = new float[]{
-                        angle,
-                        angle - 90,
-                        angle + 90,
-                    };
-                    for (int i = 0 ; i < checkAngles.Length; i ++)
+                    if (Camera.main != null)
                     {
-                        var checkPos = subSceneData.center + Quaternion.Euler(0, checkAngles[i], 0) * Vector3.forward * subSceneData.range;
-                        var viewportPoint = Camera.main.WorldToViewportPoint(checkPos);
-                        Handles.DrawLine(subSceneData.center, checkPos, 1.0f);
+                        Handles.color = new Color(1f, 1f, 0f, 1.0f);
+                        var angle = 90 - Mathf.Atan2(Camera.main.transform.position.z - subSceneData.center.z, Camera.main.transform.position.x - subSceneData.center.x) * Mathf.Rad2Deg;
+                        float[] checkAngles = new float[]{
+                            angle,
+                            angle - 90,
+                            angle + 90,
+                        };
+                        for (int i = 0; i < checkAngles.Length; i++)
+                        {
+                            var checkPos = subSceneData.center + Quaternion.Euler(0, checkAngles[i], 0) * Vector3.forward * subSceneData.range;
+                            var viewportPoint = Camera.main.WorldToViewportPoint(checkPos);
+                            Handles.DrawLine(subSceneData.center, checkPos, 1.0f);
+                        }
                     }
 
 
                     Handles.color = new Color(1f, 1f, 0f, 0.25f);
-                    Handles.DrawWireDisc(subSceneData.center, Vector3.up, subSceneData.range * SubSceneSetting.SUBSCENE_CHECK_POS_RANGE_FACTOR);
+                    Handles.DrawWireDisc(subSceneData.center, Vector3.up, subSceneData.range * SubSceneSetting.SUBSCENE_CHECK_POS_RANGE_OUT_FACTOR);
                 }
             }
         }  
@@ -218,6 +220,10 @@ public class SubSceneTool : EditorWindow
                     var newSubSceneData = new SubSceneSetting.SubSceneData();
                     newSubSceneData.sceneName = sceneName;
                     SelectedSubSceneSetting.SubSceneDatList.Add(newSubSceneData);
+
+                    var buildSettingSceneList = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
+                    buildSettingSceneList.Add(new EditorBuildSettingsScene(filePath, true));
+                    EditorBuildSettings.scenes = buildSettingSceneList.ToArray();
                 }
             }
         }

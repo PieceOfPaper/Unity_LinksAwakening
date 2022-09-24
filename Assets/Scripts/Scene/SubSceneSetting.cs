@@ -7,7 +7,8 @@ public class SubSceneSetting : ScriptableObject
 {
     [SerializeField] public List<SubSceneData> SubSceneDatList = new List<SubSceneData>();
 
-    public const float SUBSCENE_CHECK_POS_RANGE_FACTOR = 1.5f;
+    public const float SUBSCENE_CHECK_POS_RANGE_IN_FACTOR = 1.125f;
+    public const float SUBSCENE_CHECK_POS_RANGE_OUT_FACTOR = 1.75f;
     static readonly Rect SUBSCENE_CHECK_VIEWPORT_RECT = new Rect(0, 0, 1, 1);
 
     [System.Serializable]
@@ -21,13 +22,13 @@ public class SubSceneSetting : ScriptableObject
         {
             playerPos.y = 0f;
 
-            // 영역 내에 플레이어가 들어왔을 때는 확실한 상태.
-            if (Vector3.SqrMagnitude(playerPos - center) < range * range)
-                return true;
-
             // 영역 밖인데 짱멀리 있을 때는 고려하지 않는다.
-            if (Vector3.SqrMagnitude(playerPos - center) >= (range * SUBSCENE_CHECK_POS_RANGE_FACTOR) * (range * SUBSCENE_CHECK_POS_RANGE_FACTOR))
+            if (Vector3.SqrMagnitude(playerPos - center) >= (range * SUBSCENE_CHECK_POS_RANGE_OUT_FACTOR) * (range * SUBSCENE_CHECK_POS_RANGE_OUT_FACTOR))
                 return false;
+
+            // 영역 내에 플레이어가 들어왔을 때는 확실한 상태.
+            if (Vector3.SqrMagnitude(playerPos - center) < (range * SUBSCENE_CHECK_POS_RANGE_IN_FACTOR) * (range * SUBSCENE_CHECK_POS_RANGE_IN_FACTOR))
+                return true;
 
             // 카메라와 가장 가까운 포지션을 구해서, 카메라에 그려지는 지 WorldToViewportPoint로 체크
             if (cam == null) return false;
@@ -54,7 +55,7 @@ public class SubSceneSetting : ScriptableObject
             playerPos.y = 0f;
 
             // 영역 밖인데 짱멀리 있을 때.
-            if (Vector3.SqrMagnitude(playerPos - center) >= (range * SUBSCENE_CHECK_POS_RANGE_FACTOR) * (range * SUBSCENE_CHECK_POS_RANGE_FACTOR))
+            if (Vector3.SqrMagnitude(playerPos - center) >= (range * SUBSCENE_CHECK_POS_RANGE_OUT_FACTOR) * (range * SUBSCENE_CHECK_POS_RANGE_OUT_FACTOR))
                 return true;
             
             return false;

@@ -12,15 +12,18 @@ EditorBuildSettings:
     path: Assets/Scenes/Empty.unity
     guid: fe8dab894ac2848bda62e9994574431d
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Scenes/SampleWorld.unity
+    guid: f52c746c20542e544a2f31020d3c3e10
   - enabled: 1
-    path: Assets/Scenes/SampleScene_SubScene_0.unity
-    guid: 2ffca0f39f752427d8be2707d46d0e35
+    path: Assets/Scenes/SampleWorld_SubScene_0.unity
+    guid: f0845127b2832d2498be09044bfb5943
   - enabled: 1
-    path: Assets/Scenes/SampleScene_SubScene_1.unity
-    guid: 90c8dfa148b8843b9b47331572a37e59
+    path: Assets/Scenes/SampleWorld_SubScene_1.unity
+    guid: 7eb9eccbabd4ef6409dc75f6d79d29f4
   - enabled: 1
-    path: Assets/Scenes/SampleScene_SubScene_2.unity
-    guid: 97680784022ce42b180dabb41c58f2e1
+    path: Assets/Scenes/SampleWorld_SubScene_2.unity
+    guid: bde398096dddfc04f8166b96eb4dac1a
+  - enabled: 1
+    path: Assets/Scenes/SampleWorld_SubScene_3.unity
+    guid: dec5cf6091eb88a409e98295bdac011f
   m_configObjects: {}
