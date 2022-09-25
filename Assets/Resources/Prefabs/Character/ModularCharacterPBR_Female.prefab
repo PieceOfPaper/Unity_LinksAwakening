@@ -38,6 +38,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ModularCharacterPBR_Female
       objectReference: {fileID: 0}
+    - target: {fileID: 8443200014820795134, guid: d17e5d98edc1b274797fc2190f50667d,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 8794305279449221786, guid: d17e5d98edc1b274797fc2190f50667d,
         type: 3}
       propertyPath: m_IsActive

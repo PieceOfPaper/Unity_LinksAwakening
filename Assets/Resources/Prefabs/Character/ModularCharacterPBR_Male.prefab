@@ -43,10 +43,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: ModularCharacterPBR_Male
       objectReference: {fileID: 0}
+    - target: {fileID: 8443200014820795134, guid: d17e5d98edc1b274797fc2190f50667d,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 9108412604657121348, guid: d17e5d98edc1b274797fc2190f50667d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9108412604657121348, guid: d17e5d98edc1b274797fc2190f50667d,
         type: 3}
