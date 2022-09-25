@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleWorld_SubScene_3.unity
     guid: dec5cf6091eb88a409e98295bdac011f
+  - enabled: 1
+    path: Assets/Scenes/SampleDungeon.unity
+    guid: 756f960ce0bc15a499475d38c5155915
   m_configObjects: {}
