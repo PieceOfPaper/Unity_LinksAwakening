@@ -33,7 +33,10 @@ public class SubSceneSetting : ScriptableObject
             // 카메라와 가장 가까운 포지션을 구해서, 카메라에 그려지는 지 WorldToViewportPoint로 체크
             if (cam == null) return false;
 
-            var angle = 90 - Mathf.Atan2(cam.transform.position.z - center.z, cam.transform.position.x - center.x) * Mathf.Rad2Deg;
+            var camToDrawCenterDist = cam.transform.position.y / Mathf.Sin(cam.transform.eulerAngles.x * Mathf.Deg2Rad);
+            Vector3 camDrawCenterPos = camToDrawCenterDist * (Quaternion.Euler(0, cam.transform.eulerAngles.y, 0) * Vector3.forward);
+
+            var angle = 90 - Mathf.Atan2(camDrawCenterPos.z - center.z, camDrawCenterPos.x - center.x) * Mathf.Rad2Deg;
             float[] checkAngles = new float[]{
                 angle, //카메라와 가장 가까운 각도
                 angle - 90, //카메라 기준 옆
