@@ -37,19 +37,12 @@ public class SubSceneSetting : ScriptableObject
             Vector3 camDrawCenterPos = camToDrawCenterDist * (Quaternion.Euler(0, cam.transform.eulerAngles.y, 0) * Vector3.forward);
 
             var angle = 90 - Mathf.Atan2(camDrawCenterPos.z - center.z, camDrawCenterPos.x - center.x) * Mathf.Rad2Deg;
-            float[] checkAngles = new float[]{
-                angle, //카메라와 가장 가까운 각도
-                angle - 90, //카메라 기준 옆
-                angle + 90, //카메라 기준 옆
-            };
 
-            for (int i = 0 ; i < checkAngles.Length; i ++)
-            {
-                var checkPos = center + Quaternion.Euler(0, checkAngles[i], 0) * Vector3.forward * range;
-                var viewportPoint = cam.WorldToViewportPoint(checkPos);
-                if (SUBSCENE_CHECK_VIEWPORT_RECT.Contains(viewportPoint) == true)
-                    return true;
-            }
+            var checkPos = center + Quaternion.Euler(0, angle, 0) * Vector3.forward * range;
+            var viewportPoint = cam.WorldToViewportPoint(checkPos);
+            if (SUBSCENE_CHECK_VIEWPORT_RECT.Contains(viewportPoint) == true)
+                return true;
+            
             return false;
         }
 
