@@ -18,11 +18,17 @@ public class SceneChanger : MonoBehaviourSingletonTemplate<SceneChanger>
             if (GamePlayData.PlayerCtrler == null) return Vector3.zero;
             return GamePlayData.PlayerCtrler.transform.position;
         }
+        set
+        {
+            if (GamePlayData.PlayerCtrler == null) return;
+            GamePlayData.PlayerCtrler.transform.position = value;
+        }
     }
 
 
     bool m_IsChangingScene = false;
     string m_ChangeTargetSceneName;
+    Vector3 m_ChangeTargetPosition;
     string m_ChangingSceneName;
 
     float m_SceneChangeProgress = 0f;
@@ -49,7 +55,7 @@ public class SceneChanger : MonoBehaviourSingletonTemplate<SceneChanger>
         CheckSubSceneLoad();
     }
 
-    public void ChangeScene(string sceneName)
+    public void ChangeScene(string sceneName, Vector3 pos)
     {
         if (m_CurrentSceneData.IsValid() == true && m_CurrentSceneData.name.Equals(sceneName))
         {
@@ -58,6 +64,7 @@ public class SceneChanger : MonoBehaviourSingletonTemplate<SceneChanger>
         }
 
         m_ChangeTargetSceneName = sceneName;
+        m_ChangeTargetPosition = pos;
 
         if (m_IsChangingScene == false)
         {
@@ -134,13 +141,13 @@ public class SceneChanger : MonoBehaviourSingletonTemplate<SceneChanger>
                 m_SceneChangeProgress = 1.0f;
             }
 
-            //TODO - 각 씬의 설정값들을 이 쯤에서 설정해주자.
-            // 카메라, 디렉셔널라이트, 볼륨 등등
-
             // 완료!
             m_CurrentSceneData = SceneManager.GetSceneByName(m_ChangingSceneName);
             m_CurrentSubSceneSetting = subSceneSetting;
         }
+
+        PlayerPosition = m_ChangeTargetPosition;
+
         m_IsChangingScene = false;
         m_ChangingSceneName = string.Empty;
         m_ChangeTargetSceneName = string.Empty;

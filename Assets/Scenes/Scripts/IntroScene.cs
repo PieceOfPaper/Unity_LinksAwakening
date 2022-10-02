@@ -20,7 +20,7 @@ public class IntroScene : MonoBehaviour
             DontDestroyOnLoad(Camera.main);
         }
 
-        SceneChanger.Instance.ChangeScene("SampleWorld");
+        SceneChanger.Instance.ChangeScene("SampleWorld", Vector3.zero);
     }
 
     // Update is called once per frame

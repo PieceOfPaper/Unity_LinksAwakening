@@ -64585,6 +64585,7 @@ MonoBehaviour:
   - Player
   m_CheckStay: 0
   WarpSceneName: SampleDungeon
+  WarpPosition: {x: 0, y: 0, z: 3}
 --- !u!65 &1343999941
 BoxCollider:
   m_ObjectHideFlags: 0
