@@ -34,7 +34,8 @@ public class SubSceneSetting : ScriptableObject
             if (cam == null) return false;
 
             var camToDrawCenterDist = cam.transform.position.y / Mathf.Sin(cam.transform.eulerAngles.x * Mathf.Deg2Rad);
-            Vector3 camDrawCenterPos = camToDrawCenterDist * (Quaternion.Euler(0, cam.transform.eulerAngles.y, 0) * Vector3.forward);
+            Vector3 camDrawCenterPos = new Vector3(cam.transform.position.x, 0f, cam.transform.position.z);
+            camDrawCenterPos += camToDrawCenterDist * (Quaternion.Euler(0, cam.transform.eulerAngles.y, 0) * Vector3.forward);
 
             var angle = 90 - Mathf.Atan2(camDrawCenterPos.z - center.z, camDrawCenterPos.x - center.x) * Mathf.Rad2Deg;
 
