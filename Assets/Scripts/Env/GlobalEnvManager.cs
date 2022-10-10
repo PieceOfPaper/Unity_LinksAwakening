@@ -24,15 +24,17 @@ public class GlobalEnvManager : MonoBehaviourSingletonTemplate<GlobalEnvManager>
         m_GlobalDirectionalLight.transform.rotation = light.transform.rotation;
         
         m_GlobalDirectionalLight.color = light.color;
+        m_GlobalDirectionalLight.useColorTemperature = light.useColorTemperature;
         m_GlobalDirectionalLight.colorTemperature = light.colorTemperature;
         m_GlobalDirectionalLight.range = light.range;
         m_GlobalDirectionalLight.intensity = light.intensity;
         m_GlobalDirectionalLight.bounceIntensity = light.bounceIntensity;
 
-        m_GlobalDirectionalLight.useShadowMatrixOverride = light.useShadowMatrixOverride;
         m_GlobalDirectionalLight.flare = light.flare;
         m_GlobalDirectionalLight.cullingMask = light.cullingMask;
         m_GlobalDirectionalLight.renderingLayerMask = light.renderingLayerMask;
+
+        m_GlobalDirectionalLight.useShadowMatrixOverride = light.useShadowMatrixOverride;
         m_GlobalDirectionalLight.lightShadowCasterMode = light.lightShadowCasterMode;
         m_GlobalDirectionalLight.shadowRadius = light.shadowRadius;
         m_GlobalDirectionalLight.shadowAngle = light.shadowAngle;
@@ -40,20 +42,21 @@ public class GlobalEnvManager : MonoBehaviourSingletonTemplate<GlobalEnvManager>
         m_GlobalDirectionalLight.shadowStrength = light.shadowStrength;
         m_GlobalDirectionalLight.shadowResolution = light.shadowResolution;
         m_GlobalDirectionalLight.layerShadowCullDistances = light.layerShadowCullDistances;
+        m_GlobalDirectionalLight.shadowMatrixOverride = light.shadowMatrixOverride;
+        m_GlobalDirectionalLight.shadowNearPlane = light.shadowNearPlane;
+        m_GlobalDirectionalLight.useViewFrustumForShadowCasterCull = light.useViewFrustumForShadowCasterCull;
+        m_GlobalDirectionalLight.shadowCustomResolution = light.shadowCustomResolution;
+        m_GlobalDirectionalLight.shadowBias = light.shadowBias;
+        m_GlobalDirectionalLight.shadowNormalBias = light.shadowNormalBias;
+
         m_GlobalDirectionalLight.cookieSize = light.cookieSize;
         m_GlobalDirectionalLight.cookie = light.cookie;
         m_GlobalDirectionalLight.areaSize = light.areaSize;
-        m_GlobalDirectionalLight.shadowMatrixOverride = light.shadowMatrixOverride;
-        m_GlobalDirectionalLight.shadowNearPlane = light.shadowNearPlane;
         m_GlobalDirectionalLight.shape = light.shape;
         m_GlobalDirectionalLight.innerSpotAngle = light.innerSpotAngle;
         m_GlobalDirectionalLight.spotAngle = light.spotAngle;
         m_GlobalDirectionalLight.useBoundingSphereOverride = light.useBoundingSphereOverride;
         m_GlobalDirectionalLight.boundingSphereOverride = light.boundingSphereOverride;
-        m_GlobalDirectionalLight.useViewFrustumForShadowCasterCull = light.useViewFrustumForShadowCasterCull;
-        m_GlobalDirectionalLight.shadowCustomResolution = light.shadowCustomResolution;
-        m_GlobalDirectionalLight.shadowBias = light.shadowBias;
-        m_GlobalDirectionalLight.shadowNormalBias = light.shadowNormalBias;
     }
 
 
